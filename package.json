@@ -9,6 +9,7 @@
     "zip": "wxt zip",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "test:storybook": "vitest --project storybook",
     "lint": "oxlint",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
@@ -25,15 +26,20 @@
     "wxt": "^0.20.20"
   },
   "devDependencies": {
+    "@storybook/addon-vitest": "^10.3.3",
     "@storybook/react": "^10.3.3",
     "@storybook/react-vite": "^10.3.3",
     "@types/bun": "latest",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitest/browser": "^4.1.2",
+    "@vitest/browser-playwright": "^4.1.2",
     "lefthook": "^2.1.4",
     "oxfmt": "^0.43.0",
     "oxlint": "^1.58.0",
-    "storybook": "^10.3.3"
+    "playwright": "^1.58.2",
+    "storybook": "^10.3.3",
+    "vitest": "^4.1.2"
   },
   "peerDependencies": {
     "typescript": "^5"

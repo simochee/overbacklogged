@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 const config: StorybookConfig = {
   stories: ["../entrypoints/**/*.stories.@(ts|tsx)"],
+  addons: ["@storybook/addon-vitest"],
   framework: "@storybook/react-vite",
   viteFinal(config) {
     config.plugins?.push(tailwindcss());

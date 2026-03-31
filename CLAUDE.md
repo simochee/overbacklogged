@@ -12,6 +12,9 @@ This is a WXT browser extension with React + Tailwind CSS v4 (Lightning CSS).
 - `bun run dev` — WXT dev server with HMR
 - `bun run build` — production build to `.output/chrome-mv3/`
 - `bun run zip` — build + zip for distribution
+- `bun run storybook` — Storybook dev server (port 6006)
+- `bun run build-storybook` — Storybook production build
+- `bun run test:storybook` — Run Storybook interaction tests via Vitest + Playwright (headless Chromium)
 - `bun run lint` — oxlint
 - `bun run format` — oxfmt (write)
 - `bun run format:check` — oxfmt (check only, used in CI)
@@ -45,7 +48,7 @@ Default to using Bun instead of Node.js.
 
 ## Testing
 
-Use `bun test` to run tests.
+Use `bun test` to run unit tests, and `bun run test:storybook` to run UI interaction tests.
 
 ```ts#index.test.ts
 import { test, expect } from "bun:test";
@@ -54,6 +57,46 @@ test("hello world", () => {
   expect(1).toBe(1);
 });
 ```
+
+## Storybook UI Testing
+
+Every Storybook story is automatically a UI test via `@storybook/addon-vitest`. Run `bun run test:storybook` to execute all stories as headless Chromium tests.
+
+### Writing stories with interaction tests
+
+Use `play` functions to add interaction tests to stories. These verify UI behavior (clicks, inputs, assertions) and are run automatically by the test runner.
+
+```tsx#Component.stories.tsx
+import type { Meta, StoryObj } from "@storybook/react";
+import { expect } from "storybook/test";
+import { MyComponent } from "./MyComponent";
+
+const meta = {
+  title: "path/MyComponent",
+  component: MyComponent,
+} satisfies Meta<typeof MyComponent>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  play: async ({ canvas, userEvent }) => {
+    // Query elements within the story
+    await expect(canvas.getByText("Expected text")).toBeVisible();
+
+    // Simulate user interactions
+    await userEvent.click(canvas.getByRole("button"));
+
+    // Assert the result
+    await expect(canvas.getByText("Result after click")).toBeVisible();
+  },
+};
+```
+
+### Regression check workflow
+
+After making changes, run `bun run test:storybook -- --run` to verify no UI regressions. Stories without `play` functions still verify that the component renders without errors.
 
 ## Frontend
 
