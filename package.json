@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
+    "@tanstack/react-router": "^1.168.25",
     "@wxt-dev/module-react": "^1.2.2",
     "lightningcss": "^1.32.0",
     "react": "^19.2.4",
@@ -19,6 +20,7 @@
     "wxt": "^0.20.20"
   },
   "devDependencies": {
+    "@tanstack/router-plugin": "^1.167.28",
     "@types/bun": "latest",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3"

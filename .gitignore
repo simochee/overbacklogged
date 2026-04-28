@@ -24,6 +24,9 @@ coverage
 .cache
 *.tsbuildinfo
 
+# generated route tree (TanStack Router)
+src/routeTree.gen.ts
+
 # IDE
 .idea
 
