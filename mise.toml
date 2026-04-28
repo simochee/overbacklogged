@@ -1,0 +1,6 @@
+[tools]
+cargo-binstall = "latest"
+"cargo:jj-cli" = "latest"
+
+[settings]
+cargo.binstall = true
