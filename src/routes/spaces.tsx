@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
+import { useSpaceMetadata } from "@/src/hooks/useSpaceMetadata";
 import { useSpaces } from "@/src/hooks/useSpaces";
+import type { Space } from "@/src/lib/spaces";
 
 export const Route = createFileRoute("/spaces")({
   component: SpacesPage,
@@ -38,6 +40,12 @@ function SpacesPage() {
       setDomain("");
       setApiKey("");
       setLabel("");
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? `登録に失敗しちゃった: ${e.message}`
+          : "登録に失敗しちゃった",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -111,49 +119,77 @@ function SpacesPage() {
           </p>
         ) : (
           <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200">
-            {spaces.map((space) => {
-              const isActive = space.id === activeSpaceId;
-              return (
-                <li
-                  key={space.id}
-                  className="flex items-center gap-3 px-4 py-3"
-                >
-                  <input
-                    type="radio"
-                    name="active-space"
-                    checked={isActive}
-                    onChange={() => setActiveSpace(space.id)}
-                    aria-label={`${space.domain} をアクティブにする`}
-                    className="size-4"
-                  />
-                  <div className="min-w-0 flex-1 text-sm">
-                    <div className="flex items-center gap-2 font-medium">
-                      <span className="truncate">
-                        {space.label ?? space.domain}
-                      </span>
-                      {isActive && (
-                        <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-700">
-                          ACTIVE
-                        </span>
-                      )}
-                    </div>
-                    <div className="truncate text-xs text-gray-500">
-                      {space.domain}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeSpace(space.id)}
-                    className="text-sm text-red-600 hover:underline"
-                  >
-                    削除
-                  </button>
-                </li>
-              );
-            })}
+            {spaces.map((space) => (
+              <SpaceRow
+                key={space.id}
+                space={space}
+                isActive={space.id === activeSpaceId}
+                onActivate={() => setActiveSpace(space.id)}
+                onRemove={() => removeSpace(space.id)}
+              />
+            ))}
           </ul>
         )}
       </section>
     </section>
+  );
+}
+
+type SpaceRowProps = {
+  space: Space;
+  isActive: boolean;
+  onActivate: () => void;
+  onRemove: () => void;
+};
+
+function SpaceRow({ space, isActive, onActivate, onRemove }: SpaceRowProps) {
+  const { data, error, isValidating } = useSpaceMetadata(space);
+  const displayName = space.label ?? data?.spaceProfile.name ?? space.domain;
+
+  return (
+    <li className="flex items-center gap-3 px-4 py-3">
+      <input
+        type="radio"
+        name="active-space"
+        checked={isActive}
+        onChange={onActivate}
+        aria-label={`${space.domain} をアクティブにする`}
+        className="size-4"
+      />
+      <div className="min-w-0 flex-1 text-sm">
+        <div className="flex items-center gap-2 font-medium">
+          <span className="truncate">{displayName}</span>
+          {isActive && (
+            <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-700">
+              ACTIVE
+            </span>
+          )}
+          {isValidating && (
+            <span className="text-xs text-gray-400">更新中...</span>
+          )}
+        </div>
+        <div className="truncate text-xs text-gray-500">
+          {space.domain}
+          {data && (
+            <>
+              <span className="mx-1.5">·</span>
+              <span>{data.user.name}</span>
+            </>
+          )}
+        </div>
+        {error && (
+          <div className="mt-1 text-xs text-red-600">
+            プロフィールの取得に失敗しちゃった: {error.message}
+          </div>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="text-sm text-red-600 hover:underline"
+      >
+        削除
+      </button>
+    </li>
   );
 }

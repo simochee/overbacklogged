@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
+import { fetchSpaceProfile } from "@/src/lib/backlog";
 import {
   type Space,
   activeSpaceIdStorage,
   normalizeDomain,
+  spaceMetadataStorage,
   spacesStorage,
 } from "@/src/lib/spaces";
 
@@ -39,12 +41,25 @@ export function useSpaces() {
 
   const addSpace = useCallback(async (input: AddSpaceInput) => {
     const domain = normalizeDomain(input.domain);
+    const apiKey = input.apiKey.trim();
+
+    // Authenticate by fetching space + user profile. Throws on bad credentials.
+    const fetched = await fetchSpaceProfile({ domain, apiKey });
+
     const newSpace: Space = {
       id: crypto.randomUUID(),
       domain,
-      apiKey: input.apiKey.trim(),
+      apiKey,
       label: input.label?.trim() || undefined,
     };
+
+    // Prime the SWR cache so the UI shows fresh data immediately.
+    await spaceMetadataStorage(newSpace.id).setValue({
+      spaceProfile: fetched.spaceProfile,
+      user: fetched.user,
+      updatedAt: Date.now(),
+    });
+
     const next = [...(await spacesStorage.getValue()), newSpace];
     await spacesStorage.setValue(next);
     if ((await activeSpaceIdStorage.getValue()) == null) {
@@ -56,6 +71,7 @@ export function useSpaces() {
   const removeSpace = useCallback(async (id: string) => {
     const next = (await spacesStorage.getValue()).filter((s) => s.id !== id);
     await spacesStorage.setValue(next);
+    await spaceMetadataStorage(id).removeValue();
     const active = await activeSpaceIdStorage.getValue();
     if (active === id) {
       await activeSpaceIdStorage.setValue(next[0]?.id ?? null);

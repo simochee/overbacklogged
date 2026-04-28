@@ -6,6 +6,7 @@ export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   manifest: {
     name: "overbacklogged",
+    permissions: ["storage"],
   },
   react: {
     vitePluginsBefore: [
