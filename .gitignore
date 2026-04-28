@@ -1,0 +1,31 @@
+# dependencies
+node_modules
+
+# build output
+.output
+.wxt
+dist
+storybook-static
+*.tgz
+
+# test coverage
+coverage
+*.lcov
+
+# logs
+*.log
+
+# environment variables
+.env
+.env.local
+.env.*.local
+
+# caches
+.cache
+*.tsbuildinfo
+
+# IDE
+.idea
+
+# macOS
+.DS_Store
