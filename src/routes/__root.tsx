@@ -15,6 +15,12 @@ function RootLayout() {
           Home
         </Link>
         <Link
+          to="/spaces"
+          className="text-sm font-medium text-gray-600 [&.active]:text-black [&.active]:font-bold"
+        >
+          Spaces
+        </Link>
+        <Link
           to="/about"
           className="text-sm font-medium text-gray-600 [&.active]:text-black [&.active]:font-bold"
         >
