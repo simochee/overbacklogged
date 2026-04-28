@@ -1,6 +1,6 @@
 ---
 name: jj-new
-description: Use BEFORE the first file edit of any new logical task to advance @ to a new empty commit, preventing changes from being mixed into the previous commit. Trigger when starting a new feature, bug fix, refactor, or any task whose scope differs from the previous commit. Skip when not in a jj repo, when @ is already empty, or when the current task directly continues the same concern (e.g. fixing a bug in code you just wrote in @).
+description: Trigger BEFORE the first file edit of any new logical task — when starting a new feature, beginning a bug fix, switching to an unrelated change, beginning a refactor, or when the previous commit description is "done" and you are about to work on something different. Advances @ to a new empty commit so the previous commit stays clean. Skip only when not in a jj repo, when @ already has no description, or when the work directly continues the previous commit's concern (e.g. fixing a bug in code you just wrote there). When unsure, invoke.
 ---
 
 # jj-new
